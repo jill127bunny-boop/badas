@@ -17,6 +17,10 @@ document.addEventListener("DOMContentLoaded", () => {
     { name: "Arizz", photoUrl: "images/Model.png" },
     { name: "Denny", photoUrl: "images/Model.png" },
     { name: "Yudha", photoUrl: "images/Model.png" },
+    { name: "Guest1", photoUrl: "images/Guest1.png" },
+    { name: "Guest2", photoUrl: "images/Guest2.png" },
+    { name: "Guest3", photoUrl: "images/Guest3.png" },
+    { name: "Guest4", photoUrl: "images/Guest4.png" },
   ];
 
   const SELECTED_MARKER = " (TERPILIH)";
