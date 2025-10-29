@@ -1,30 +1,28 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // --- DATA PEMAIN LENGKAP UNTUK FOTO (TIDAK DITAMPILKAN DI ANTARMUKA) ---
+  // --- KONFIGURASI DAN DATA MASTER (Hanya untuk referensi foto) ---
   const ALL_PLAYER_DATA = [
     { name: "Sony", photoUrl: "images/Sony.png" },
-    { name: "Setiawan", photoUrl: "images/Model.png" },
-    { name: "Faridz", photoUrl: "images/Model.png" },
-    { name: "Awan", photoUrl: "images/Model.png" },
+    { name: "Agus", photoUrl: "images/Model.png" },
+    { name: "Farid", photoUrl: "images/Model.png" },
+    { name: "Adi", photoUrl: "images/Model.png" },
     { name: "Aprizal", photoUrl: "images/Model.png" },
-    { name: "Doly", photoUrl: "images/Model.png" },
-    { name: "Qtink", photoUrl: "images/Model.png" },
-    { name: "AFN", photoUrl: "images/Model.png" },
-    { name: "ANR", photoUrl: "images/Model.png" },
-    { name: "Idans", photoUrl: "images/Model.png" },
-    { name: "Drew", photoUrl: "images/Model.png" },
-    { name: "Da'un", photoUrl: "images/Model.png" },
-    { name: "Far1s", photoUrl: "images/Model.png" },
-    { name: "Arizz", photoUrl: "images/Model.png" },
+    { name: "Dolly", photoUrl: "images/Model.png" },
+    { name: "Kiting", photoUrl: "images/Model.png" },
+    { name: "Adnan", photoUrl: "images/Model.png" },
+    { name: "Nuril", photoUrl: "images/Model.png" },
+    { name: "Idan", photoUrl: "images/Model.png" },
+    { name: "Andre", photoUrl: "images/Model.png" },
+    { name: "Ikhsan", photoUrl: "images/Model.png" },
+    { name: "Fatih", photoUrl: "images/Model.png" },
+    { name: "Farizi", photoUrl: "images/Model.png" },
     { name: "Denny", photoUrl: "images/Model.png" },
     { name: "Yudha", photoUrl: "images/Model.png" },
-    { name: "Guest1", photoUrl: "images/Model.png" },
-    { name: "Guest2", photoUrl: "images/Model.png" },
-    { name: "Guest3", photoUrl: "images/Model.png" },
-    { name: "Guest4", photoUrl: "images/Model.png" },
   ];
 
   const SELECTED_MARKER = " (TERPILIH)";
-  const STORAGE_KEY = "badmintonPlayersData";
+  const STORAGE_KEY = "badmintonPlayersData"; // Local Storage key untuk daftar pemain
+  const RESULTS_HTML_KEY = "badmintonResultsHtml"; // Local Storage key untuk hasil tampilan
+
   let pairingCount = 1;
 
   // --- FUNGSI UTILITY & LOCAL STORAGE ---
@@ -45,8 +43,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function loadPlayersFromStorage() {
     const storedData = localStorage.getItem(STORAGE_KEY);
+
+    // Jika ada data di storage, gunakan itu. Jika tidak, ambil dari ALL_PLAYER_DATA (default).
     if (storedData) {
-      return storedData.split("\n");
+      return storedData.split("\n").filter((name) => name.trim().length > 0);
     }
     return ALL_PLAYER_DATA.map((p) => p.name);
   }
@@ -57,11 +57,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function getAvailablePlayers(allPlayersInTextarea) {
+    // Mengembalikan pemain yang TIDAK memiliki marker (TERPILIH)
     return allPlayersInTextarea
       .filter((name) => !name.includes(SELECTED_MARKER))
       .map((name) => name.trim())
       .filter((name) => name.length > 0);
   }
+
+  // --- LOGIKA PEMISAH HALAMAN ---
 
   // FUNGSI KHUSUS players.html (Manajemen Daftar)
   if (document.title.includes("Daftar Pemain")) {
@@ -70,20 +73,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function initPlayerPage() {
       let allPlayersInTextarea = loadPlayersFromStorage();
-      playerNamesInput.value = allPlayersInTextarea.join("\n");
-
-      const availablePlayers = getAvailablePlayers(allPlayersInTextarea);
+      playerNamesInput.value = allPlayersInTextarea.join("\n"); // Tampilkan data storage di textarea
       totalPlayersSpan.textContent = allPlayersInTextarea.length;
+    }
+
+    // EVENT LISTENER: Simpan perubahan input ke Local Storage
+    playerNamesInput.addEventListener("input", () => {
+      let updatedNames = playerNamesInput.value.split("\n");
+      savePlayersToStorage(updatedNames);
+      totalPlayersSpan.textContent = updatedNames.filter(
+        (n) => n.trim().length > 0
+      ).length;
+    });
+
+    // PENTING: Jika halaman pertama kali dibuka, simpan daftar default ke storage
+    if (!localStorage.getItem(STORAGE_KEY)) {
+      savePlayersToStorage(ALL_PLAYER_DATA.map((p) => p.name));
     }
 
     initPlayerPage();
 
-    // FUNGSI KHUSUS index.html (Pengacakan, Tampilan Foto, dan Reset)
+    // FUNGSI KHUSUS index.html (Pengacakan)
   } else if (document.title.includes("BADAS")) {
     const drawButton = document.getElementById("draw-button");
-    const resetButton = document.getElementById("reset-button"); // Ambil elemen reset
+    const resetButton = document.getElementById("reset-button");
     const resultsDiv = document.getElementById("results");
     const totalPlayersSpan = document.getElementById("total-players");
+
+    // --- FUNGSIONALITAS PENGACAKAN ---
 
     function getPlayerHtml(playerName) {
       const playerData = ALL_PLAYER_DATA.find((p) => p.name === playerName);
@@ -100,14 +117,15 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
     }
 
-    function updateStatusAndSave(selectedNamesRaw) {
+    function updateStatusAndSave(selectedPlayersRaw) {
       let allPlayersInTextarea = loadPlayersFromStorage();
 
       const updatedPlayers = allPlayersInTextarea.map((name) => {
         const cleanName = name.replace(SELECTED_MARKER, "").trim();
 
+        // Tandai pemain yang baru terpilih
         if (
-          selectedNamesRaw.includes(cleanName) &&
+          selectedPlayersRaw.includes(cleanName) &&
           !name.includes(SELECTED_MARKER)
         ) {
           return name.trim() + SELECTED_MARKER;
@@ -116,27 +134,35 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       savePlayersToStorage(updatedPlayers);
-      return getAvailablePlayers(updatedPlayers);
+      return updatedPlayers; // Mengembalikan daftar yang diupdate
     }
 
     function initDrawPage() {
       let allPlayersInTextarea = loadPlayersFromStorage();
       let availablePlayers = getAvailablePlayers(allPlayersInTextarea);
 
+      // Muat hasil HTML yang tersimpan
+      const savedHtml = localStorage.getItem(RESULTS_HTML_KEY);
+      if (savedHtml) {
+        resultsDiv.innerHTML = savedHtml;
+        pairingCount = resultsDiv.querySelectorAll(".pairing").length + 1;
+      } else {
+        resultsDiv.innerHTML = "";
+        pairingCount = 1;
+      }
+
       totalPlayersSpan.textContent = availablePlayers.length;
       drawButton.disabled = availablePlayers.length < 4;
 
       const selectedCount =
         allPlayersInTextarea.length - availablePlayers.length;
-      resetButton.style.display = selectedCount > 0 ? "block" : "none"; // Tampilkan reset jika ada yang terpilih
+      resetButton.style.display = selectedCount > 0 ? "block" : "none";
 
-      // Hapus pesan status sebelumnya
       const statusMessage = resultsDiv.querySelector(".status-message");
       if (statusMessage) statusMessage.remove();
 
-      // Tampilkan pesan status baru
       if (availablePlayers.length < 4) {
-        const messageHtml = `<div class="pairing status-message" ><h3>Perhatian!</h3><p>Hanya tersisa ${availablePlayers.length} pemain. Klik **Reset** di bawah ini.</p></div>`;
+        const messageHtml = `<div class="pairing status-message" ><h3>Perhatian!</h3><p>Hanya tersisa ${availablePlayers.length} pemain. Klik Reset</p></div>`;
         resultsDiv.insertAdjacentHTML("afterbegin", messageHtml);
       }
     }
@@ -152,7 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
       shuffle(availablePlayers);
       const selectedPlayersRaw = availablePlayers.splice(0, 4);
 
-      const remainingPlayers = updateStatusAndSave(selectedPlayersRaw);
+      const updatedPlayersList = updateStatusAndSave(selectedPlayersRaw); // Simpan status terpilih
 
       const teamA = [selectedPlayersRaw[0], selectedPlayersRaw[1]];
       const teamB = [selectedPlayersRaw[2], selectedPlayersRaw[3]];
@@ -191,12 +217,17 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
       resultsDiv.insertAdjacentHTML("afterbegin", html);
 
+      // Simpan hasil tampilan ke Local Storage
+      localStorage.setItem(RESULTS_HTML_KEY, resultsDiv.innerHTML);
+
       initDrawPage();
     }
 
     // EVENT LISTENER UNTUK TOMBOL RESET
     resetButton.addEventListener("click", () => {
       let allPlayersInTextarea = loadPlayersFromStorage();
+
+      // Hapus semua marker (TERPILIH)
       let cleanedNames = allPlayersInTextarea.map((name) =>
         name.replace(SELECTED_MARKER, "").trim()
       );
@@ -204,14 +235,16 @@ document.addEventListener("DOMContentLoaded", () => {
       // Simpan status bersih ke Local Storage
       savePlayersToStorage(cleanedNames);
 
-      // Hapus hasil pertandingan sebelumnya
+      // Hapus hasil tampilan
+      localStorage.removeItem(RESULTS_HTML_KEY);
+
       resultsDiv.innerHTML = "<h2>Hasil</h2>";
       pairingCount = 1;
 
-      initDrawPage(); // Muat ulang tampilan setelah reset
+      initDrawPage();
     });
 
     drawButton.addEventListener("click", drawPairing);
-    initDrawPage();
+    initDrawPage(); // Inisialisasi tampilan di awal
   }
 });

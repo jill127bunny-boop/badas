@@ -1,79 +1,75 @@
-/* --- Styling Navbar --- */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #333;
+  color: #fff;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column; /* Untuk menumpuk navbar dan container */
+  min-height: 100vh; /* Pastikan body mengambil tinggi penuh viewport */
+}
+
 .navbar {
-  background-color: #999;
-  overflow: hidden;
-  width: 100%;
-  position: fixed; /* Membuat navbar tetap di atas */
-  top: 0;
-  left: 0;
-  z-index: 1000;
+  background-color: #222;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .navbar a {
-  float: left;
-  display: block;
-  color: #333;
-  text-align: center;
-  padding: 14px 16px;
+  color: #f4d03f;
   text-decoration: none;
-  font-size: 17px;
+  font-size: 20px;
   font-weight: bold;
+  padding: 5px 15px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
 }
 
-.navbar a:hover {
-  background-color: #cbf06734;
-  color: black;
-}
-
-.navbar a.home {
-  font-weight: bold;
-}
-
-.navbar b {
-  float: left;
-  color: black;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-  pointer-events: none;
-}
-
-.navbar b:hover {
-  background-color: #ddd;
-  color: black;
-}
-
-/* --- Akhir Styling Navbar --- */
-
-body {
-  font-family: Arial, sans-serif;
-  -webkit-animation: color-change-5x 8s linear infinite alternate both;
-  animation: color-change-5x 8s linear infinite alternate both;
-  color: #333;
-  display: flex;
-  justify-content: center;
-  /* Tambahkan padding atas agar konten tidak tertutup navbar */
-  padding: 40px 0 0 0;
-  min-height: 100vh;
-  margin: 0;
+.navbar a:hover,
+.navbar a.active {
+  background-color: #555;
 }
 
 .container {
-  color: #ddd;
-  width: 100%;
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 20px;
+  background-color: #444;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   text-align: center;
+  flex-grow: 1; /* Agar container mengisi ruang yang tersedia */
+}
+
+h1 {
+  color: #e0e2c9;
+  margin-bottom: 10px;
+  font-size: 1.5em;
+}
+
+p {
+  font-size: 1em;
+  margin-bottom: 20px;
+}
+
+span#total-players {
+  font-weight: bold;
+  color: #e0e2c9;
 }
 
 #draw-button {
   display: inline-block;
   padding: 15px 25px;
-  font-size: 24px;
+  font-size: 20px;
+  font-weight: bold;
   cursor: pointer;
   text-align: center;
   text-decoration: none;
-  color: #333;
-  background-color: #e0e2c9;
+  color: #f4d03f;
+  background-color: #555;
   border: none;
   border-radius: 15px;
   box-shadow: 0 9px #999;
@@ -86,16 +82,17 @@ body {
 }
 
 #reset-button {
-  display: block; /* UBAH: Jadikan elemen blok */
+  display: inline-block; /* UBAH: Jadikan elemen blok */
   width: fit-content; /* BARU: Berikan lebar seukuran kontennya */
   margin: 20px auto;
   padding: 15px 25px;
-  font-size: 24px;
+  font-size: 17px;
+  font-weight: bold;
   cursor: pointer;
   text-align: center;
   text-decoration: none;
-  color: #333;
-  background-color: #e0e2c9;
+  color: #f4d03f;
+  background-color: #555;
   border: none;
   border-radius: 15px;
   box-shadow: 0 9px #999;
@@ -106,104 +103,179 @@ body {
   transform: translateY(4px);
 }
 
-.teams-container {
-  display: flex; /* Mengaktifkan Flex Row utama */
-  justify-content: space-around;
-  align-items: center;
-  height: 100vh;
-  padding: 15px 0;
-  gap: 10px;
-  background-color: #3b3b3b;
-}
-
-/* Wrapper untuk Pasangan 1 dan Pasangan 2 (kolom utama) */
-.team-column-wrapper {
-  flex: 1; /* Memberikan lebar yang sama untuk kedua kolom */
-  text-align: center;
-  height: fit-content;
-  background-color: #f0f0f0; /* Latar belakang kolom */
-  padding: 10px;
+.pairing {
+  background-color: #555;
+  border-left: 5px solid #f4d03f; /* Garis kuning di kiri */
+  padding: 15px;
+  margin-top: 30px;
+  margin-bottom: 20px;
   border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column; /* Default stack vertikal untuk mobile */
+  gap: 10px; /* Jarak antar kolom tim */
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  animation: slideInLeft 0.5s ease-out forwards;
 }
 
-/* --- TATA LETAK PEMAIN DALAM SATU PASANGAN (Flex Row) --- */
+.match-info {
+  font-weight: bold;
+  font-size: 1.2em;
+  color: #f4d03f;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.teams-container {
+  display: flex;
+  flex-direction: column; /* Default stack vertikal untuk mobile */
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+.team-column-wrapper {
+  background-color: #666;
+  padding: 10px;
+  border-radius: 5px;
+  width: 100%; /* Ambil lebar penuh di mobile */
+  box-sizing: border-box; /* Pastikan padding tidak menambah lebar */
+}
+
+.team-column-wrapper h4 {
+  margin-top: 0;
+  color: #e0e2c9;
+  text-align: center;
+  font-size: 1.1em;
+  margin-bottom: 10px;
+}
 
 .player-pair-row {
-  display: flex; /* Mengaktifkan Flex Row untuk pemain (Pemain 1 & Pemain 2) */
-  justify-content: space-around;
-  align-items: center;
-  padding: 10px 0;
-  gap: 5px;
+  display: flex;
+  flex-wrap: wrap; /* Izinkan wrapping jika terlalu banyak pemain */
+  justify-content: center; /* Rata tengah pemain */
+  gap: 10px; /* Jarak antar pemain */
 }
 
 .player-display {
   display: flex;
-  flex-direction: column; /* Foto di atas nama */
+  flex-direction: column; /* Teks di bawah gambar */
   align-items: center;
-  width: 48%; /* Setiap pemain menempati hampir setengah dari baris */
+  text-align: center;
+  max-width: 100px; /* Batasi lebar container pemain */
+  flex-basis: 48%; /* Setiap pemain mengambil hampir setengah lebar */
 }
 
-/* Styling Foto */
-.player-display img {
-  width: 100%; /* Ukuran foto yang lebih tetap */
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
+.player-photo {
+  width: 80px; /* Ukuran gambar default */
+  height: 80px;
+  border-radius: 50%; /* Bentuk lingkaran */
+  object-fit: cover; /* Pastikan gambar mengisi lingkaran */
+  border: 2px solid #f4d03f;
   margin-bottom: 5px;
-  border: 3px solid #007bff;
 }
 
 .player-name {
-  font-size: 2em;
+  font-size: 0.9em;
   font-weight: bold;
-  color: #333;
-  line-height: 2;
-}
-
-/* --- STYLING JUDUL DAN PEMISAH --- */
-.team-column-wrapper h4 {
-  color: #28a745;
-  margin: 5px 0 10px 0;
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 5px;
-  text-align: center; /* Rata tengah di kolom */
+  color: #fff;
+  margin: 0;
+  line-height: 1.2; /* Jaga agar teks tidak terlalu rapat */
+  word-break: break-word; /* Pecah kata jika nama terlalu panjang */
 }
 
 .versus {
-  /* Gaya untuk teks "VS" di tengah */
-  display: flex;
-  align-items: center;
   font-size: 1.5em;
   font-weight: bold;
-  color: #ff4500;
-  padding: 0 10px;
+  color: #f4d03f;
+  margin: 0; /* Jarak atas/bawah untuk 'VS' di mobile */
 }
 
-#player-names {
-  /* Dimensi & Posisi */
-  width: 50%; /* Sesuaikan dengan lebar container */
-  min-height: 300px; /* Tingkatkan tinggi minimum agar lebih leluasa */
-  padding: 15px; /* Tambahkan ruang di dalam kotak */
-  margin: 20px auto; /* Pusatkan secara horizontal */
-  display: block;
+@media (min-width: 768px) {
+  .container {
+    padding: 30px 40px;
+  }
 
-  /* Tampilan Dasar */
-  font-family: "Calibri", monospace; /* Gunakan font monospace agar nama sejajar */
-  font-size: 20px;
-  line-height: 1.6; /* Jarak antar baris lebih longgar */
-  color: #333;
+  h1 {
+    font-size: 2.8em;
+  }
 
-  /* Border dan Shadow */
-  border: 10px solid #ddd; /* Border tipis dan lembut */
-  border-radius: px; /* Sudut membulat */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* Tambahkan bayangan lembut */
+  .button-group {
+    flex-direction: row; /* Kembali ke horizontal untuk desktop */
+    justify-content: center;
+    gap: 20px;
+  }
 
-  /* Karena readonly, hapus efek fokus yang mengganggu */
-  outline: none;
-  resize: none; /* Cegah pengguna mengubah ukuran textarea */
+  .button-group button {
+    min-width: 250px;
+  }
 
-  /* Background (Jika ingin sedikit berbeda dari putih murni) */
-  background-color: #f9f9f9;
+  .pairing {
+    flex-direction: row; /* Kembali ke horizontal untuk desktop */
+    justify-content: space-around;
+    align-items: center;
+  }
+
+  .teams-container {
+    flex-direction: row; /* Kembali ke horizontal untuk desktop */
+    justify-content: space-around;
+    flex-grow: 1; /* Agar tim mengambil ruang yang tersedia */
+  }
+
+  .team-column-wrapper {
+    width: 45%; /* Setiap kolom tim mengambil sekitar setengah lebar */
+  }
+
+  .player-display {
+    max-width: 120px; /* Lebar maksimum pemain sedikit lebih besar di desktop */
+    flex-basis: auto; /* Jangan paksa 48% di desktop */
+  }
+
+  .player-photo {
+    width: 90px;
+    height: 90px;
+  }
+
+  .player-name {
+    font-size: 1em;
+  }
+
+  .versus {
+    margin: 0 20px; /* Jarak kiri/kanan untuk 'VS' di desktop */
+  }
+}
+
+/* Untuk halaman players.html */
+.players-list {
+  border-left: 5px solid #f4d03f; /* Garis kuning di kiri */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  animation: slideInLeft 0.5s ease-out forwards;
+  background-color: #555;
+  padding: 20px;
+  border-radius: 20px;
+  margin-top: 20px;
+}
+
+.players-list .note {
+  font-size: 0.9em;
+  color: #ccc;
+  margin-bottom: 15px;
+}
+
+textarea#player-names {
+  width: 100%;
+  min-height: 300px;
+  text-align: center;
+  padding: 15px;
+  border: none;
+  border-radius: 20px;
+  background-color: #666;
+  color: #f4d03f;
+  font-family: monospace;
+  font-size: 1.1em;
+  resize: vertical; /* Izinkan resize vertikal */
+  box-sizing: border-box;
 }
 
 /**
@@ -241,45 +313,3 @@ body {
     both;
   animation: slide-in-left 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
-
-/**
- * ----------------------------------------
- * animation color-change-5x
- * ----------------------------------------
- */
-@-webkit-keyframes color-change-5x {
-  0% {
-    background: #666;
-  }
-  25% {
-    background: #999;
-  }
-  50% {
-    background: #333;
-  }
-  75% {
-    background: #3b3b3b;
-  }
-  100% {
-    background: #5b5b5b;
-  }
-}
-@keyframes color-change-5x {
-  0% {
-    background: #666;
-  }
-  25% {
-    background: #999;
-  }
-  50% {
-    background: #333;
-  }
-  75% {
-    background: #3b3b3b;
-  }
-  100% {
-    background: #5b5b5b;
-  }
-}
-
-/* ... (Styling lainnya seperti .pairing, .teams-container, .player-photo tetap sama) ... */
